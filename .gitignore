@@ -1,0 +1,25 @@
+# Python-specific
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+instance/
+*.egg-info/
+*.mo
+
+# Celery-related (if applicable)
+beat-schedule.db
+
+# General ignores
+.DS_Store
+*.swp
+*~
+logs/
+*.log
+
+# IDEs and tools
+.idea/
+.vscode/
+*.iml
+*.pyc

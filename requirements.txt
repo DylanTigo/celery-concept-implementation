@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+celery
+redis
+flower
+pydantic
+python-dotenv
+emails
+jinja2

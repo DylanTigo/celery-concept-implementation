@@ -1,0 +1,78 @@
+services:
+  # Worker Celery
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/src
+    depends_on:
+      - redis
+    networks:
+      - celery_network
+    restart: unless-stopped
+    command: celery -A src.celery_app worker --loglevel=info --concurrency=4
+
+  # Scheduler Celery Beat
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/src
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - celery_network
+    restart: unless-stopped
+    command: celery -A src.celery_app beat --loglevel=info --scheduler=celery.beat.PersistentScheduler --schedule=/src/beat-schedule.db
+
+  # Monitoring avec Flower
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_flower
+    ports:
+      - "5555:5555"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/src
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - celery_network
+    restart: unless-stopped
+    command: celery -A src.celery_app flower --port=5555 --address=0.0.0.0
+
+  # Redis (broker et backend)
+  redis:
+    image: redis
+    container_name: celery_email_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - celery_network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+
+networks:
+  celery_network:
+    driver: bridge
