@@ -33,26 +33,16 @@ def send_single_email(
 
 # Traitement parallèle - Envoi en masse
 @celery_app.task(name="process_bulk_emails")
-def process_bulk_emails(
-    recipients: List[str],
-    subject: str,
-    body: str
-):
+def process_bulk_emails( recipients: List[str], subject: str, body: str ):
   """
   Tâche qui distribue l'envoi d'emails en masse vers des workers en parallèle
   """
-  # Création d'un groupe de tâches individuelles
   email_tasks = group(
       send_single_email.s(recipient, subject, body)
       for recipient in recipients
   )
-
-  # Exécution du groupe et récupération des résultats
-  results = email_tasks.apply_async()
-  task_results = results.get()
-
-  # Construction du dictionnaire de résultats
-  return dict(zip(recipients, task_results))
+  email_tasks.apply_async()
+  return True
 
 
 # Tâche 3: Tâche de finalisation pour générer un rapport
@@ -83,17 +73,16 @@ def email_campaign_workflow(
       process_bulk_emails.s(recipients, subject, body),
 
       # Étape 2: Génération du rapport
-      generate_email_report.s(),
+      # generate_email_report.s(),
 
       # Étape 3: Envoi du rapport à l'admin
-      send_single_email.s(
+      send_single_email.si(
           "admin@example.com",
           "Rapport de campagne d'emails",
           "Veuillez trouver ci-joint le rapport de la campagne d'emails."
       )
   )
 
-  # Lancement du workflow
   result = workflow.apply_async()
   return result.id
 

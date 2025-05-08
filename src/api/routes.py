@@ -57,6 +57,7 @@ async def send_bulk_emails(bulk_request: BulkEmailRequest):
     
     return {
         "task_id": task.id,
+        "task": task,
         "message": f"Envoi en masse de {len(bulk_request.recipients)} emails en cours"
     }
 
