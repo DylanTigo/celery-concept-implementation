@@ -5,7 +5,6 @@ from ..tasks.email_tasks import (
     send_single_email,
     process_bulk_emails,
     email_campaign_workflow,
-    email_campaign_with_report
 )
 from ..tasks.periodic_tasks import send_inactivity_reminders
 
@@ -73,20 +72,6 @@ async def start_email_campaign(bulk_request: BulkEmailRequest):
     return {
         "task_id": str(task_id),
         "message": "Campagne d'emails démarrée avec workflow complet"
-    }
-
-@router.post("/email/campaign-with-report", response_model=TaskResponse)
-async def start_email_campaign_with_report(bulk_request: BulkEmailRequest):
-    """Démarre une campagne d'emails avec chord (groupe + callback)"""
-    task_id = email_campaign_with_report.delay(
-        recipients=bulk_request.recipients,
-        subject=bulk_request.subject,
-        body=bulk_request.body
-    )
-    
-    return {
-        "task_id": str(task_id),
-        "message": "Campagne d'emails avec rapport démarrée"
     }
 
 @router.post("/email/reminders", response_model=TaskResponse)

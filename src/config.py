@@ -22,7 +22,7 @@ RETRY_DELAY = 60  # en secondes
 
 # Configuration de la simulation d'emails
 EMAIL_SIMULATION_DELAY = 10  # secondes de délai pour simuler l'envoi
-EMAIL_FAILURE_RATE = 0.2    # taux d'échec simulé (20%)
+EMAIL_FAILURE_RATE = 0.5    # taux d'échec simulé (20%)
 
 # Configuration de Flower
 FLOWER_PORT = 5555
