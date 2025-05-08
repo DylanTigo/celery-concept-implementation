@@ -39,11 +39,7 @@ celery_app.conf.beat_schedule = {
     'send-daily-report': {
         'task': 'src.tasks.periodic_tasks.send_daily_report',
         'schedule': 300.0,
-    },
-    'clean-old-tasks': {
-        'task': 'src.tasks.periodic_tasks.clean_old_tasks',
-        'schedule': 900.0,
-    },
+    }
 }
 
 

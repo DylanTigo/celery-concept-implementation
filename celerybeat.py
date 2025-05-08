@@ -4,7 +4,6 @@ Script pour démarrer le scheduler Celery Beat
 Usage: python celerybeat.py
 """
 
-import os
 import logging
 from src.celery_app import celery_app
 

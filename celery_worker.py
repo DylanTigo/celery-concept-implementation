@@ -1,10 +1,8 @@
-#!/usr/bin/env python
 """
 Script pour démarrer un worker Celery
 Usage: python celery_worker.py
 """
 
-import os
 import logging
 from src.celery_app import celery_app
 

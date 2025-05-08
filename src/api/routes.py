@@ -90,7 +90,6 @@ async def start_email_campaign_with_report(bulk_request: BulkEmailRequest):
 
 @router.post("/email/reminders", response_model=TaskResponse)
 async def trigger_inactivity_reminders():
-    """Déclenche l'envoi de rappels aux utilisateurs inactifs"""
     task = send_inactivity_reminders.delay()
     
     return {
