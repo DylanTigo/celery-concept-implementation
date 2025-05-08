@@ -29,20 +29,27 @@ def send_single_email(
     logger.warning(
       f"Échec de l'envoi d'email à {to_email}, tentative de retry: {self.request.retries + 1}/{MAX_RETRIES}")
     raise Exception("Email sending failed")
+  
+  return True
 
 
 # Traitement parallèle - Envoi en masse
 @celery_app.task(name="process_bulk_emails")
-def process_bulk_emails( recipients: List[str], subject: str, body: str ):
-  """
-  Tâche qui distribue l'envoi d'emails en masse vers des workers en parallèle
-  """
-  email_tasks = group(
-      send_single_email.s(recipient, subject, body)
-      for recipient in recipients
-  )
-  email_tasks.apply_async()
-  return True
+def process_bulk_emails(
+    recipients: List[str],
+    subject: str,
+    body: str
+):
+    header = group(
+        send_single_email.s(recipient, subject, body)
+        for recipient in recipients
+    )
+    return chord(header)(collect_bulk_results.s(recipients))
+
+
+@celery_app.task(name="collect_bulk_results")
+def collect_bulk_results(results, recipients):
+    return dict(zip(recipients, results))
 
 
 # Tâche 3: Tâche de finalisation pour générer un rapport
