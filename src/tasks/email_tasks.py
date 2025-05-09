@@ -20,18 +20,17 @@ logger = logging.getLogger(__name__)
 def send_single_email(self, to_email: str, subject: str, body: str) -> bool:
 
     try:
-        logger.info(f"Tentative d'envoi à {to_email}")
-        result = EmailService.send_email(to_email=to_email, subject=subject, body=body)
+        logger.info(f"Envoi à {to_email}")
+        success = EmailService.send_email(to_email=to_email, subject=subject, body=body)
 
-        if result:
+        if success:
             return True
         else:
             logger.warning(
                 f"Échec de l'envoi d'email à {to_email}, tentative de retry..."
             )
-            raise Exception("Email sending failed")
+            raise Exception("Échec d'envoi")
 
-    
     except Exception as exc:
         if self.request.retries < self.max_retries:
             logger.warning(f"Retry {self.request.retries + 1} pour {to_email}")
@@ -49,7 +48,7 @@ def process_bulk_emails(recipients: List[str], subject: str, body: str):
     return email_tasks_group.apply_async()
 
 
-## Collecte des résultats
+# Collecte des résultats
 @celery_app.task(name="collect_bulk_results")
 def collect_bulk_results(results, recipients):
     return dict(zip(recipients, results))
