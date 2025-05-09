@@ -1,7 +1,7 @@
 import time
 import random
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict
 from ..config import EMAIL_SIMULATION_DELAY, EMAIL_FAILURE_RATE
 
 logger = logging.getLogger(__name__)

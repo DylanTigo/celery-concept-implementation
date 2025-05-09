@@ -39,7 +39,11 @@ celery_app.conf.beat_schedule = {
     'send-daily-report': {
         'task': 'src.tasks.periodic_tasks.send_daily_report',
         'schedule': 300.0,
-    }
+    },
+    'send-inactivity-reminders': {
+        'task': 'src.tasks.periodic_tasks.send_inactivity_reminders',
+        'schedule': 86400.0,  # Une fois par jour
+    },
 }
 
 

@@ -11,10 +11,7 @@ logger = logging.getLogger(__name__)
 # Envoi quotidien de rapport
 @celery_app.task(name="src.tasks.periodic_tasks.send_daily_report")
 def send_daily_report():
-    """
-    Tâche périodique pour envoyer un rapport quotidien
-    Programmée via Celery Beat
-    """
+
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.info(f"Exécution de la tâche périodique send_daily_report à {current_time}")
 
